@@ -45,12 +45,9 @@ const server = new ApolloServer({
 });
 
 server.start().then(() => {
-    app.use('/graphql', cors(), bodyParser.json(), expressMiddleware(server));
-    app.use(express.static('public')); 
-    app.use('/images', express.static('images'));
-
-    const PORT = 4000;
-    httpServer.listen(PORT, () => {
-        console.log(`Server is now running on http://localhost:${PORT}/graphql`);
-    });
+  app.use('/graphql', cors(), bodyParser.json(), expressMiddleware(server));
+  const PORT = 4000;
+  httpServer.listen(PORT, () => {
+    console.log(`Server is now running on http://localhost:${PORT}/graphql`);
+  });
 })
