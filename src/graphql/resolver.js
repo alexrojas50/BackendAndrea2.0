@@ -1,5 +1,5 @@
 import User from "../models/user"
-import Chat from "../models/Chats"
+import Chat from "../models/chats"
 import Joi from "joi"
 import { bcryptHash, bcryptCompare } from "../utils/bcrypt"
 import { jwtGenerator, jwtVerify } from "../utils/jwt"
