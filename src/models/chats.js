@@ -10,7 +10,13 @@ const parChat = new Schema({
 const Chats = new Schema({
     usersID: [Schema.Types.ObjectId],
     messages: [{ userID: Schema.Types.ObjectId, message: String, date: Date, userName: String }],
-    group: { isGroup: {type: Boolean, required: true}, groupName: String}
+    group: {
+        isGroup: {
+            type: Boolean, 
+            required: true
+        }, 
+        groupName: String
+    }
 })
 
 

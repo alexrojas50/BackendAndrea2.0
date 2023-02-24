@@ -5,9 +5,11 @@ const typeDefs = gql`
 
 scalar Date
 scalar Buffer
+scalar Upload
 
 type data {
     data: Buffer
+    contentType: String
 }
 
 
@@ -30,6 +32,12 @@ type messages {
     userID: ID
     message: String
     date: Date
+}
+
+type returnMessages {
+    success: Boolean
+    error: String
+    messages: [messages]
 }
 
 type messagesSubscription {
@@ -61,6 +69,11 @@ type returnStatus {
     error: String
 }
 
+type statusSubs {
+    userId: String
+    status: Boolean
+}
+
 input register {
     userName: String
     userPassword: String
@@ -79,10 +92,30 @@ input insertMessage {
     date: Date
 }
 
+input insertMessageFriend {
+    friendId: String
+    userName: String
+    userId: String
+    message: String
+    date: Date
+}
+
+input changeImgInput {
+    userId: ID
+    base64: Upload
+}
+
+input getMessagesInput{
+    userId: String
+    friendId: String
+    isGroup: Boolean
+    chatId: String
+}
+
 type Query {
     getAllUsers: [dataUsers]
     getUsers(id: [ID]): [dataUsers]
-    getMessage(id: ID): [messages]
+    getMessage(data: getMessagesInput): returnMessages
     getChats(id:ID): [dataChats]
     login(userInfo: login): loginReturn
     hola: String
@@ -91,13 +124,16 @@ type Query {
 
 type Mutation {
     register(userInfo: register): registerReturn
-    insertMessage(data: insertMessage): messageReturn
+    insertMessageGruop(data: insertMessage): messageReturn
+    insertMessageFriend(data: insertMessageFriend): messageReturn
+    Croissant(userId: ID): messageReturn
     changeStatus(id: ID): returnStatus
+    changeImgUser(data: changeImgInput): registerReturn
 }
 
 type Subscription {
     messageAdded(id: ID): messagesSubscription
-    messageAdded2: String
+    statusUser: statusSubs
 
 }
 `

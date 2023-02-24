@@ -11,6 +11,8 @@ import cors from 'cors';
 import { resolvers } from './graphql/resolver';
 import { typeDefs } from './graphql/schema';
 import dbConnect from './mongo/mongo'
+import { json } from 'express';
+
 
 
 
@@ -44,7 +46,10 @@ const server = new ApolloServer({
   ],
 });
 
+
+
 server.start().then(() => {
+  app.use(json({ limit: '2mb' }))
   app.use('/graphql', cors(), bodyParser.json(), expressMiddleware(server));
   const PORT = 4000;
   httpServer.listen(PORT, () => {
