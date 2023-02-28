@@ -26,7 +26,6 @@ const resolvers = {
         getAllUsers: async () => {
             try {
                 const users = await User.find({}, { userName: 1, id: 1, status: 1, img: 1 })
-                console.log("RETORNANDO USARIOS")
                 return users
             } catch (error) {
                 console.log("Ocurrió un error obteniendo a los usuarios")
@@ -49,14 +48,12 @@ const resolvers = {
                     const chat = await Chat.findOne({ _id: data.data.chatId }, { messages: 1, usersID: 1 }).sort({ date: 1 })
                     if (!chat) throw "No existe este chat"
                     if (!chat.usersID.includes(data.data.userId)) throw "No perteneces a este chat"
-                    console.log("PASANDOO33333")
 
                     return { error: false, success: true, messages: chat.messages }
                 } else {
                     const chat = await Chat.findOne(
                         { usersID: { $all: [mongoose.Types.ObjectId(data.data.userId), mongoose.Types.ObjectId(data.data.friendId)] }, group: { isGroup: false } },
                         { _id: 1, usersID: 1, messages: 1 })
-                    console.log(chat)
                     if (!chat) throw "No existe este chat"
                     if (!chat.usersID.includes(data.data.userId)) throw "No perteneces a este chat"
                     return { error: false, success: true, messages: chat.messages }
@@ -108,14 +105,12 @@ const resolvers = {
                 await jwtVerify(token)
                 user.status = true
                 user.save()
-                console.log("AVERRRR")
                 pubsub.publish('STATUS_CHANGED', {
                     statusUser: {
                         userId: user.id,
                         status: true
                     }
                 });
-                console.log("AVERRRR")
                 return {
                     token: token,
                     userName: data.userInfo.userName,
@@ -163,20 +158,16 @@ const resolvers = {
         },
         insertMessageGruop: async (_, data) => {
             try {
-                console.log("DATAAA", data)
                 const chat = await Chat.findOne({ _id: mongoose.Types.ObjectId(data.data.chatId) }, { group: 1, usersID: 1 })
-                console.log("CHATTT", chat)
 
                 if (!chat) throw "No existe este chat"
 
                 const user = await User.findOne({ id: mongoose.Types.ObjectId(data.data.userId) }, { _id: 1, userName: 1 })
                 if (!user) throw "Este usuario no existe"
-                console.log("USUARIOO", user)
                 const IDs = []
                 chat.usersID.forEach(id => {
                     IDs.push(id.toString())
                 });
-                console.log("IDSSSS", IDs, IDs.includes(data.data.userId))
                 if (!IDs.includes(data.data.userId)) throw "No perteneces a este chat"
                 const mesaje = {
                     userID: data.data.userId,
@@ -185,10 +176,8 @@ const resolvers = {
                     date: data.data.date
                 }
                 const message = await Chat.updateOne({ id: data.chatId }, { $push: { "messages": mesaje } })
-                console.log("UPDATEEE", message)
 
                 if (message.modifiedCount == 0) throw "Ah ocurrido un error al envíar el mensaje"
-                console.log("USERIDDDD", chat.usersID)
                 pubsub.publish('MESSAGE_ADDED', {
                     messageAdded: {
                         message: mesaje,
@@ -273,7 +262,6 @@ const resolvers = {
 
                 const userFind = await User.findById(data.data.userId, { img: 1 })
                 if (!userFind) throw "Este usuario no existe"
-                console.log("DATAAAA", data.data)
                 var imageAsBase64 = data.data.base64
                 var contentType = imageAsBase64.split("/")[1].split(";")[0]
                 var bindata = new Buffer.from(imageAsBase64.split(",")[1], "base64");
@@ -341,13 +329,10 @@ const resolvers = {
         messageAdded: {
             subscribe: withFilter(
                 () => {
-                    console.log("XDDD")
                     return pubsub.asyncIterator('MESSAGE_ADDED')
                 },
                 (payload, variables) => {
-                    console.log("AVERR")
                     const IDs = []
-                    console.log("PAYOLADDDD", payload)
                     payload.messageAdded.usersID.forEach(id => {
                         IDs.push(id.toString())
                     });
@@ -366,7 +351,6 @@ const resolvers = {
     }
 }
 
-//console.log(await bcryptCompare(data.userInfo.userPassword, passwordHashed))
 
 
 module.exports = { resolvers }
