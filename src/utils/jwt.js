@@ -4,7 +4,11 @@ async function jwtGenerator(data) {
     return await jwt.sign({
         userName: data.userName,
         userId: data.userId
-    }, 'passwordSuperFuerteSiKSi');
+    }, 'passwordSuperFuerteSiKSi', {
+
+        expiresIn: 3600
+
+         });
 }
 
 async function jwtVerify(token) {

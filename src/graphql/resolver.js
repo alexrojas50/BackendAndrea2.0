@@ -136,8 +136,9 @@ const resolvers = {
         register: async (_, data) => {
             try {
                 if (data.userInfo.userName.toLowerCase() == "jeremy" || data.userInfo.userName.toLowerCase() == "croissant" || data.userInfo.userName.toLowerCase() == "quaso") data.userInfo.userName = "Mariquito"
+                if (data.userInfo.userName.indexOf(' ') >= 0) throw "No se permiten espacios en el nombre de usuario"
                 const registerSchema = Joi.object({
-                    userName: Joi.string().min(3).max(30).required(),
+                    userName: Joi.string().min(3).max(10).required(),
                     userPassword: Joi.string().min(6).max(30).required(),
                 })
                 const validations = registerSchema.validate({ userName: data.userInfo.userName, userPassword: data.userInfo.userPassword })
